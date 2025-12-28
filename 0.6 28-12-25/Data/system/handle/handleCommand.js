@@ -123,7 +123,8 @@ async function showBotInfo(api, event, client, Users, config) {
   const hours = Math.floor(uptime / 3600);
   const minutes = Math.floor((uptime % 3600) / 60);
   const seconds = Math.floor(uptime % 60);
-  const time = moment().tz('Asia/Karachi').format('hh:mm:ss A || DD/MM/YYYY');
+  const time = moment().tz('Asia/Karachi').format('hh:mm:ss A');
+  const date = moment().tz('Asia/Karachi').format('DD/MM/YYYY');
   
   const uniqueCommands = new Set();
   if (client && client.commands) {
@@ -152,18 +153,20 @@ async function showBotInfo(api, event, client, Users, config) {
     }
   } catch (e) {}
   
-  const message = `╭─────────────────╮
-│  ${config.BOTNAME || 'SARDAR RDX'}  
-├─────────────────┤
-│ 📅 ${time}
-│ 👤 ${userName}
-│ 📊 Commands: ${commandCount}
-│ 🔧 Prefix: ${config.PREFIX}
-│ ⏰ Uptime: ${hours}h ${minutes}m ${seconds}s
-│ 📁 Latest: ${latestFile}
-├─────────────────┤
-│ Type ${config.PREFIX}help for commands
-╰─────────────────╯`;
+  const message = `╔════════════════════════════════════════╗
+║    🤖 ${String(config.BOTNAME || 'SARDAR RDX').padEnd(32)} 🤖    ║
+╠════════════════════════════════════════╣
+║  📅 Time: ${time}  ║
+║  👤 User: ${String(userName).substring(0, 30).padEnd(28)} ║
+║  📊 Commands: ${String(commandCount).padStart(2, ' ')}${' '.repeat(27)} ║
+║  🔧 Prefix: ${config.PREFIX}${' '.repeat(33 - config.PREFIX.length)} ║
+║  ⏰ Uptime: ${hours}h ${minutes}m ${seconds}s${' '.repeat(22 - String(hours).length - String(minutes).length - String(seconds).length)} ║
+║  📁 Latest: ${String(latestFile).substring(0, 28).padEnd(28)} ║
+║  📅 Date: ${date}${' '.repeat(24)} ║
+╠════════════════════════════════════════╣
+║  💡 Type ${config.PREFIX}help for all commands        ║
+║  📖 Type ${config.PREFIX}help all for detailed menu    ║
+╚════════════════════════════════════════╝`;
   
   api.sendMessage(message, threadID, (err, info) => {
     if (!err && info && info.messageID) {
@@ -184,13 +187,15 @@ async function showSuggestion(api, event, client, Users, config, commandName) {
   
   if (checker.bestMatch.rating < 0.3) {
     const userName = await Users.getNameUser(senderID);
-    const message = `╭─────────────────╮
-│ ❌ Command Not Found
-├─────────────────┤
-│ 👤 ${userName}
-│ ❓ "${commandName}" not found
-│ 💡 Type ${config.PREFIX}help for commands
-╰─────────────────╯`;
+    const message = `╔════════════════════════════════════════╗
+║      ❌ COMMAND NOT FOUND              ║
+╠════════════════════════════════════════╣
+║  👤 User: ${String(userName).substring(0, 30).padEnd(28)} ║
+║  ❓ Command: "${commandName}"${' '.repeat(24 - commandName.length)} ║
+╠════════════════════════════════════════╣
+║  💡 Type ${config.PREFIX}help for available commands ║
+║  📖 Need help? Use ${config.PREFIX}help all         ║
+╚════════════════════════════════════════╝`;
     api.sendMessage(message, threadID, (err, info) => {
       if (!err && info && info.messageID) {
         setTimeout(() => {
@@ -208,16 +213,16 @@ async function showSuggestion(api, event, client, Users, config, commandName) {
   const seconds = Math.floor(uptime % 60);
   const time = moment().tz('Asia/Karachi').format('hh:mm:ss A || DD/MM/YYYY');
   
-  const message = `╭─────────────────╮
-│  ${config.BOTNAME || 'SARDAR RDX'}  
-├─────────────────┤
-│ 📅 ${time}
-│ 👤 ${userName}
-│ ❓ Did you mean: ${config.PREFIX}${checker.bestMatch.target}?
-│ ⏰ Uptime: ${hours}h ${minutes}m ${seconds}s
-├─────────────────┤
-│ Type ${config.PREFIX}help for commands
-╰─────────────────╯`;
+  const message = `╔════════════════════════════════════════╗
+║    💡 DID YOU MEAN THIS COMMAND?       ║
+╠════════════════════════════════════════╣
+║  👤 User: ${String(userName).substring(0, 30).padEnd(28)} ║
+║  ✨ Suggestion: ${config.PREFIX}${String(checker.bestMatch.target).padEnd(23)} ║
+║  ⏰ Uptime: ${hours}h ${minutes}m ${seconds}s${' '.repeat(22 - String(hours).length - String(minutes).length - String(seconds).length)} ║
+╠════════════════════════════════════════╣
+║  💡 Type ${config.PREFIX}help for commands        ║
+║  📖 Type ${config.PREFIX}help [command] for details ║
+╚════════════════════════════════════════╝`;
   
   api.sendMessage(message, threadID, (err, info) => {
     if (!err && info && info.messageID) {
