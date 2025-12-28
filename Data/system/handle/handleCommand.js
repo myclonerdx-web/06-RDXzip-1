@@ -153,9 +153,9 @@ async function showBotInfo(api, event, client, Users, config) {
     }
   } catch (e) {}
   
-  const message = `╔════════════════════════════════════════╗
+  const message = `╔═════════════════╗
 ║    🤖 ${String(config.BOTNAME || 'SARDAR RDX').padEnd(32)} 🤖    ║
-╠════════════════════════════════════════╣
+╠════════════════╣
 ║  📅 Time: ${time}  ║
 ║  👤 User: ${String(userName).substring(0, 30).padEnd(28)} ║
 ║  📊 Commands: ${String(commandCount).padStart(2, ' ')}${' '.repeat(27)} ║
@@ -163,10 +163,10 @@ async function showBotInfo(api, event, client, Users, config) {
 ║  ⏰ Uptime: ${hours}h ${minutes}m ${seconds}s${' '.repeat(22 - String(hours).length - String(minutes).length - String(seconds).length)} ║
 ║  📁 Latest: ${String(latestFile).substring(0, 28).padEnd(28)} ║
 ║  📅 Date: ${date}${' '.repeat(24)} ║
-╠════════════════════════════════════════╣
+╠═════════════════╣
 ║  💡 Type ${config.PREFIX}help for all commands        ║
 ║  📖 Type ${config.PREFIX}help all for detailed menu    ║
-╚════════════════════════════════════════╝`;
+╚═════════════════╝`;
   
   api.sendMessage(message, threadID, (err, info) => {
     if (!err && info && info.messageID) {
