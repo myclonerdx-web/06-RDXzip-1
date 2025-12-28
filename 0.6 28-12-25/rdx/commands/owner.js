@@ -17,10 +17,10 @@ module.exports = {
     const { threadID, messageID } = event;
 
     const ownerPics = [
-      'https://i.ibb.co/672Zf20L/99ea4edb30db.jpg',
-      'https://i.ibb.co/bRBZxk9v/20df2c060ec2.jpg',
-      'https://i.ibb.co/gMkf5Dmk/252782e1baf1.jpg',
-      'https://i.ibb.co/PspxZNzh/b247dec7d443.jpg'
+      'https://i.ibb.co/Cp13xBsR/b2edd4c03615.jpg',
+      '',
+      '',
+      ''
     ];
 
     const randomPic = ownerPics[Math.floor(Math.random() * ownerPics.length)];
@@ -30,24 +30,24 @@ module.exports = {
 ║   ✨ 𝐁𝐎𝐓 𝐎𝐖𝐍𝐄𝐑 𝐈𝐍𝐅𝐎 ✨   ║
 ╠═══════════════════════════╣
 ║                           ║
-║  👤 𝐍𝐚𝐦𝐞: 𝙺𝚊𝚎𝚕 𝙳𝚛𝚊𝚟𝚎𝚗𝚣     ║
+║  👤 𝐍𝐚𝐦𝐞: SARDAR RDX    ║
 ║                           ║
 ╠═══════════════════════════╣
 ║  📱 𝐂𝐨𝐧𝐭𝐚𝐜𝐭 𝐈𝐧𝐟𝐨:          ║
 ║                           ║
 ║  🌐 𝐅𝐚𝐜𝐞𝐛𝐨𝐨𝐤:              ║
-║  facebook.com/kaeldravenz ║
+║  facebook.com/SARDAR RDX ║
 ║                           ║
 ║  📲 𝐖𝐡𝐚𝐭𝐬𝐀𝐩𝐩:              ║
-║  wa.me/923422413092       ║
+║  wa.me/923301068874       ║
 ║                           ║
 ╠═══════════════════════════╣
 ║  🤖 𝐁𝐨𝐭 𝐃𝐞𝐭𝐚𝐢𝐥𝐬:           ║
 ║                           ║
 ║  📛 Name: ${config.BOTNAME || 'SARDAR RDX'}
 ║  ⚡ Prefix: ${config.PREFIX || '.'}
-║  💻 Version: 2.0.0        ║
-║  🛠️ Framework: WS3-FCA    ║
+║  💻 Version: 0.5       ║
+║  🛠️ Framework: RDX-FCA    ║
 ║                           ║
 ╠═══════════════════════════╣
 ║  💝 𝙏𝙝𝙖𝙣𝙠 𝙮𝙤𝙪 𝙛𝙤𝙧 𝙪𝙨𝙞𝙣𝙜!  ║
@@ -58,10 +58,10 @@ module.exports = {
       const cacheDir = path.join(__dirname, 'cache');
       fs.ensureDirSync(cacheDir);
       const imgPath = path.join(cacheDir, `owner_${Date.now()}.jpg`);
-      
+
       const response = await axios.get(randomPic, { responseType: 'arraybuffer' });
       fs.writeFileSync(imgPath, Buffer.from(response.data));
-      
+
       api.sendMessage(
         {
           body: ownerInfo,

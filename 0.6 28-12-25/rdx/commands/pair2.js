@@ -1,7 +1,6 @@
 const axios = require("axios");
 const fs = require("fs-extra");
 const path = require("path");
-const Jimp = require("jimp");
 
 module.exports.config = {
   name: "pair2",
@@ -90,6 +89,7 @@ async function downloadImage(url, filePath) {
     fs.writeFileSync(filePath, Buffer.from(response.data));
     return true;
   } catch (e) {
+    console.error("Download error:", e.message);
     return false;
   }
 }
@@ -104,47 +104,13 @@ function cleanupFiles(...files) {
   }
 }
 
-async function createCompositeImage(avatar1Path, gifPath, avatar2Path, outputPath) {
-  try {
-    const [img1, gif, img2] = await Promise.all([
-      Jimp.read(avatar1Path),
-      Jimp.read(gifPath),
-      Jimp.read(avatar2Path)
-    ]);
-
-    const size = 200;
-    img1.resize(size, size);
-    gif.resize(size, size);
-    img2.resize(size, size);
-
-    const width = size * 3 + 40;
-    const height = size + 100;
-
-    const composite = new Jimp(width, height, 0x000000ff);
-
-    composite.blit(img1, 10, 50);
-    composite.blit(gif, size + 20, 50);
-    composite.blit(img2, size * 2 + 30, 50);
-
-    const font = await Jimp.loadFont(Jimp.FONT_SANS_32_WHITE);
-    composite.print(font, width / 2 - 100, 10, "PAIR SUCCESSFULLY");
-
-    await composite.write(outputPath);
-    return true;
-  } catch (e) {
-    console.error("Error creating composite image:", e);
-    return false;
-  }
-}
-
 module.exports.run = async function({ api, event, Users }) {
   const { threadID, messageID, senderID } = event;
 
   const timestamp = Date.now();
-  const avtPath = path.join(cacheDir, `avt_pair2_${timestamp}_1.png`);
+  const avtPath = path.join(cacheDir, `avt_pair2_${timestamp}_1.jpg`);
   const gifPath = path.join(cacheDir, `gif_pair2_${timestamp}.gif`);
-  const avt2Path = path.join(cacheDir, `avt_pair2_${timestamp}_2.png`);
-  const compositePath = path.join(cacheDir, `composite_pair2_${timestamp}.png`);
+  const avt2Path = path.join(cacheDir, `avt_pair2_${timestamp}_2.jpg`);
 
   try {
     if (!fs.existsSync(cacheDir)) {
@@ -182,21 +148,25 @@ module.exports.run = async function({ api, event, Users }) {
     const avatar2Url = `https://graph.facebook.com/${user2}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`;
     const gifUrl = `https://i.ibb.co/wC2JJBb/trai-tim-lap-lanh.gif`;
 
-    await Promise.all([
+    const downloadSuccess = await Promise.all([
       downloadImage(avatar1Url, avtPath),
       downloadImage(gifUrl, gifPath),
       downloadImage(avatar2Url, avt2Path)
     ]);
 
-    const imageCreated = await createCompositeImage(avtPath, gifPath, avt2Path, compositePath);
-
-    if (!imageCreated) {
-      return api.sendMessage("┏━•❃°•°❀°•°❃•━┓\n\n❌ 𝐄𝐫𝐫𝐨𝐫 𝐜𝐫𝐞𝐚𝐭𝐢𝐧𝐠 𝐢𝐦𝐚𝐠𝐞!\n\n┗━•❃°•°❀°•°❃•━┛", threadID, messageID);
+    if (!downloadSuccess.every(s => s)) {
+      cleanupFiles(avtPath, gifPath, avt2Path);
+      return api.sendMessage("┏━•❃°•°❀°•°❃•━┓\n\n❌ 𝐄𝐫𝐫𝐨𝐫 𝐝𝐨𝐰𝐧𝐥𝐨𝐚𝐝𝐢𝐧𝐠 𝐢𝐦𝐚𝐠𝐞𝐬!\n\n┗━•❃°•°❀°•°❃•━┛", threadID, messageID);
     }
 
     var arraytag = [];
     arraytag.push({id: user1, tag: name1});
     arraytag.push({id: user2, tag: name2});
+
+    const imglove = [];
+    if (fs.existsSync(avtPath)) imglove.push(fs.createReadStream(avtPath));
+    if (fs.existsSync(gifPath)) imglove.push(fs.createReadStream(gifPath));
+    if (fs.existsSync(avt2Path)) imglove.push(fs.createReadStream(avt2Path));
 
     const msg = {
       body: `┏━•❃°•°❀°•°❃•━┓
@@ -230,20 +200,22 @@ module.exports.run = async function({ api, event, Users }) {
 
 📍 𝐆𝐫𝐨𝐮𝐩: ${randomGroup.name}
 
+✓ PAIR SUCCESSFULLY ✓
+
 ${name1} 🌺 ${name2}`,
       mentions: arraytag,
-      attachment: fs.createReadStream(compositePath)
+      attachment: imglove.length > 0 ? imglove : undefined
     };
 
     return api.sendMessage(msg, threadID, () => {
       setTimeout(() => {
-        cleanupFiles(avtPath, gifPath, avt2Path, compositePath);
+        cleanupFiles(avtPath, gifPath, avt2Path);
       }, 3000);
     }, messageID);
 
   } catch (error) {
     console.error("Pair2 command error:", error);
-    cleanupFiles(avtPath, gifPath, avt2Path, compositePath);
-    return api.sendMessage("┏━•❃°•°❀°•°❃•━┓\n\n❌ 𝐄𝐫𝐫𝐨𝐫 𝐞𝐱𝐞𝐜𝐮𝐭𝐢𝐧𝐠 𝐜𝐨𝐦𝐦𝐚𝐧𝐝!\n\n┗━•❃°•°❀°•°❃•━┛", threadID, messageID);
+    cleanupFiles(avtPath, gifPath, avt2Path);
+    return api.sendMessage("┏━•❃°•°❀°•°❃•━┓\n\n❌ 𝐄𝐫𝐫𝐨𝐫 𝐞𝐱𝐞𝐜𝐮𝐭𝐢𝐧𝐠 𝐜𝐨𝐦𝐦𝐚𝐧𝐝: " + error.message + "\n\n┗━•❃°•°❀°•°❃•━┛", threadID, messageID);
   }
 };
