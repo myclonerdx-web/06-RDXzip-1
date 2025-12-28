@@ -1,6 +1,30 @@
+modules = ["nodejs-20"]
 [nix]
 channel = "stable-25_05"
 packages = ["unzip"]
 
 [agent]
 expertMode = true
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Bot Server"
+
+[[workflows.workflow]]
+name = "Bot Server"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd \"0.6 28-12-25\" && npm run bot"
+
+[workflows.workflow.metadata]
+outputType = "console"
