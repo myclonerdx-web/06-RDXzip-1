@@ -1,4 +1,3 @@
-
 module.exports = {
   config: {
     name: 'help',
@@ -37,18 +36,23 @@ module.exports = {
       }
       
       if (!command) {
-        return send.reply(`Command "${input}" not found.`);
+        return send.reply(`❌ Command "${input}" not found.`);
       }
       
       const cfg = command.config;
-      return send.reply(`COMMAND: ${cfg.name}
-─────────────────
-Description: ${cfg.description || 'No description'}
-Usage: ${config.PREFIX}${cfg.usage || cfg.name}
-Aliases: ${cfg.aliases?.join(', ') || 'None'}
-Category: ${cfg.category || 'Other'}
-Admin Only: ${cfg.adminOnly ? 'Yes' : 'No'}
-Group Only: ${cfg.groupOnly ? 'Yes' : 'No'}`);
+      return send.reply(`╔═══════════════════════════════════╗
+║       🔍 COMMAND DETAILS          ║
+╚═══════════════════════════════════╝
+
+🎯 Name: ${cfg.name.toUpperCase()}
+📝 Description: ${cfg.description || 'No description'}
+⚡ Usage: ${config.PREFIX}${cfg.usage || cfg.name}
+🏷️ Aliases: ${cfg.aliases?.join(', ') || 'None'}
+📂 Category: ${cfg.category || 'Other'}
+👮 Admin Only: ${cfg.adminOnly ? '✅ Yes' : '❌ No'}
+👥 Group Only: ${cfg.groupOnly ? '✅ Yes' : '❌ No'}
+
+╚═══════════════════════════════════╝`);
     }
     
     return showPagedCommands({ api, event, send, client, config, page: 1 });
@@ -65,32 +69,39 @@ function showPagedCommands({ api, event, send, client, config, page }) {
   }
   
   const commandsArray = Array.from(uniqueCommands.values());
-  const commandsPerPage = 10;
+  const commandsPerPage = 12;
   const totalPages = Math.ceil(commandsArray.length / commandsPerPage);
   
   if (page < 1 || page > totalPages) {
-    return send.reply(`Invalid page number. Please use page 1-${totalPages}`);
+    return send.reply(`❌ Invalid page number. Please use page 1-${totalPages}`);
   }
   
   const startIdx = (page - 1) * commandsPerPage;
   const endIdx = startIdx + commandsPerPage;
   const pageCommands = commandsArray.slice(startIdx, endIdx);
   
-  let msg = `${config.BOTNAME} COMMANDS
-─────────────────
-Page ${page}/${totalPages}
-Total: ${commandsArray.length} commands
-Prefix: ${config.PREFIX}
-─────────────────\n\n`;
+  let msg = `╔════════════════════════════════════════╗
+║          📚 ${config.BOTNAME} COMMANDS          ║
+╠════════════════════════════════════════╣
+║  📄 Page ${String(page).padEnd(2)} / ${String(totalPages).padEnd(2)} │ Total: ${String(commandsArray.length).padStart(3)} Commands  ║
+║  ⚙️ Prefix: ${config.PREFIX}${' '.repeat(28 - config.PREFIX.length)}║
+╚════════════════════════════════════════╝
+
+`;
   
-  pageCommands.forEach(cmd => {
-    msg += `╰┈➤ ${cmd.name}\n`;
+  pageCommands.forEach((cmd, idx) => {
+    const num = startIdx + idx + 1;
+    msg += `  ✦ [${String(num).padStart(2)}] ${cmd.name}\n`;
   });
   
-  msg += `\n─────────────────
-Use ${config.PREFIX}help [page] for more
-Use ${config.PREFIX}help all for all commands
-Use ${config.PREFIX}help [command] for details`;
+  msg += `
+╔════════════════════════════════════════╗
+║  🔹 ${String(page).padEnd(2)} / ${String(totalPages).padEnd(2)} │ More Commands Available             ║
+╠════════════════════════════════════════╣
+║  💡 ${config.PREFIX}help [page]   → See next page      ║
+║  📖 ${config.PREFIX}help all      → Show all commands   ║
+║  ❓ ${config.PREFIX}help [cmd]    → Command details     ║
+╚════════════════════════════════════════╝`;
   
   return send.reply(msg);
 }
@@ -111,13 +122,15 @@ function showAllCommands({ api, event, send, client, config }) {
     categories[cat].push(cfg);
   }
   
-  let msg = `${config.BOTNAME} COMMANDS
-─────────────────
-Prefix: ${config.PREFIX}
-Total: ${uniqueCommands.size} commands
-─────────────────\n`;
+  let msg = `╔═══════════════════════════════════════╗
+║       🎮 ALL COMMANDS MENU            ║
+║       ${config.BOTNAME}                          ║
+╠═══════════════════════════════════════╣
+║  ⚙️ Prefix: ${config.PREFIX}                         ║
+║  📊 Total: ${String(uniqueCommands.size).padStart(2)} Commands               ║
+╚═══════════════════════════════════════╝\n`;
   
-  const categoryOrder = ['Admin', 'Group', 'Friend', 'Economy', 'Media', 'Fun', 'Profile', 'Utility', 'Other'];
+  const categoryOrder = ['Admin', 'Group', 'Friend', 'Economy', 'Media', 'Fun', 'Profile', 'Utility', 'Love', 'Other'];
   
   const categoryEmojis = {
     'Admin': '👑',
@@ -125,9 +138,10 @@ Total: ${uniqueCommands.size} commands
     'Friend': '🤝',
     'Economy': '💰',
     'Media': '🎵',
-    'Fun': '💕',
+    'Fun': '🎉',
     'Profile': '👤',
     'Utility': '🔧',
+    'Love': '💕',
     'Other': '📋'
   };
   
@@ -135,24 +149,28 @@ Total: ${uniqueCommands.size} commands
     if (!categories[cat]) continue;
     
     const emoji = categoryEmojis[cat] || '📋';
+    msg += `\n${emoji} ⟿ ${cat.toUpperCase()} (${categories[cat].length})\n`;
+    msg += `${'─'.repeat(37)}\n`;
     
-    msg += `\n${emoji} ${cat.toUpperCase()}\n`;
     categories[cat].forEach(c => {
-      msg += `╰┈➤ ${c.name}\n`;
+      msg += `    ▸ ${c.name}\n`;
     });
   }
   
   for (const cat in categories) {
     if (!categoryOrder.includes(cat)) {
-      msg += `\n📋 ${cat.toUpperCase()}\n`;
+      msg += `\n📋 ⟿ ${cat.toUpperCase()} (${categories[cat].length})\n`;
+      msg += `${'─'.repeat(37)}\n`;
       categories[cat].forEach(c => {
-        msg += `╰┈➤ ${c.name}\n`;
+        msg += `    ▸ ${c.name}\n`;
       });
     }
   }
   
-  msg += `\n─────────────────
-Type ${config.PREFIX}help [command] for details`;
+  msg += `\n╔═══════════════════════════════════════╗
+║  💡 Use ${config.PREFIX}help [command] for details   ║
+║  📖 Use ${config.PREFIX}help [page] for paging      ║
+╚═══════════════════════════════════════╝`;
   
   return send.reply(msg);
 }
