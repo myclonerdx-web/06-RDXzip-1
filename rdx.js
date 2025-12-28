@@ -29,20 +29,20 @@ let client = {
 };
 
 const quranPics = [
-  'https://i.ibb.co/8gWzFpqV/bbc9bf12376e.jpg',
-  'https://i.ibb.co/DgGmLMTL/2a27f2cecc80.jpg',
-  'https://i.ibb.co/Kz8CBZBD/db27a4756c35.jpg',
-  'https://i.ibb.co/zTKnLMq9/c52345ec3639.jpg',
-  'https://i.ibb.co/8gfGBHDr/8e3226ab3861.jpg',
-  'https://i.ibb.co/WNK2Dbbq/ffed087e09a5.jpg',
-  'https://i.ibb.co/hRVXMQhz/fe5e09877fa8.jpg'
+  'https://i.ibb.co/JRBFpq8t/6c776cdd6b6c.gif',
+  'https://i.ibb.co/TDy4gPY3/3c32c5aa9c1d.gif',
+  'https://i.ibb.co/8nr8qyQ4/6bc620dedb70.gif',
+  'https://i.ibb.co/7dTJ6CDr/fb08a62a841c.jpg',
+  'https://i.ibb.co/6cPMkDjz/598fc7c4d477.jpg',
+  'https://i.ibb.co/Txn0TTps/7e729fcd56e1.jpg',
+  'https://i.ibb.co/5WQY7xCn/dd0f3964d6cf.jpg'
 ];
 
 const namazPics = [
-  'https://i.ibb.co/sp39k0CY/e2630b0f2713.jpg',
-  'https://i.ibb.co/BKdttjgN/8cd831a43211.jpg',
-  'https://i.ibb.co/Q3hVDVMr/c0de33430ba4.jpg',
-  'https://i.ibb.co/7td1kK7W/6d713bbe5418.jpg'
+  'https://i.ibb.co/wZpyLkrY/dceaf4301489.jpg',
+  'https://i.ibb.co/6xQbz5W/a6a8d577489d.jpg',
+  'https://i.ibb.co/DgKj8LNT/77b2f9b97b9e.jpg',
+  'https://i.ibb.co/bg3PJH6v/f5056f9410d1.gif'
 ];
 
 const quranAyats = [
