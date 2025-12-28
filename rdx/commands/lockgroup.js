@@ -19,11 +19,6 @@ module.exports = {
       const adminIDs = threadInfo.adminIDs.map(a => a.id);
       const botID = api.getCurrentUserID();
       
-      // Check if bot is admin
-      if (!adminIDs.includes(botID)) {
-        return send.reply('❌ Bot must be a group admin to lock/unlock group settings.');
-      }
-      
       // Check if sender is group admin or bot admin
       const isGroupAdmin = adminIDs.includes(senderID);
       const isBotAdmin = config.ADMINBOT.includes(senderID);
@@ -106,9 +101,9 @@ Access from: ${new Date().toLocaleString('en-US', { timeZone: config.TIMEZONE ||
           }
           
           const unlockMsg = `
-╔═══════════════════════╗
+╔════════════════════════════════════╗
 ║     🔓 GROUP UNLOCKED 🔓          ║
-╚═══════════════════════╝
+╚════════════════════════════════════╝
 
 ✅ All group settings are now UNLOCKED
 
@@ -132,9 +127,9 @@ Unlocked from: ${new Date().toLocaleString('en-US', { timeZone: config.TIMEZONE 
       }
       else if (action === 'status') {
         const statusMsg = `
-╔═══════════════════════╗
-║    📊 GROUP LOCK STATUS 📊  ║
-╚═══════════════════════╝
+╔════════════════════════════════════╗
+║    📊 GROUP LOCK STATUS 📊        ║
+╚════════════════════════════════════╝
 
 👥 GROUP ADMINS: ${adminIDs.length}
 🤖 BOT STATUS: ${adminIDs.includes(botID) ? '✅ Admin' : '❌ Not Admin'}
